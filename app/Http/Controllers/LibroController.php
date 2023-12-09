@@ -35,15 +35,19 @@ class LibroController extends Controller
     }
 
     public function filtrar(Request $request){
-        $autor = Autor::where('estado', 1)->get();
-        $libros = DB::table('libros')
-        ->join('autors', 'autor_id', '=', 'autors.id')
-        ->where('libros.estado', 1)
-        ->where('autors.id', '=', $request->datoFiltrado)
-        ->select('libros.*', 'autors.nombre')
+        $categoria=Categoria::all();
+        $producto=DB::table("categorias")
+        ->join('productos', 'Id_categoria', '=', 'productos.Id_categoria')
+
+        ->where('productos.estado', 1)
+
+        ->where('categorias.nombre', 'LIKE','%'.$request->buscar.'%')
+        ->select('productos.id','productos.nombre','productos.fechadevencimiento','productos.precio', 'productos.stock','categorias.nombre as categoria')
         ->get();
-        return view('libro.tabla',compact('libros', 'autor'));
+           return view("productos.index",compact("categorias"),compact("productos"));
+   
     }
+    
 
     public function eliminar($id){
         $libro = Libro::find($id);
@@ -78,3 +82,4 @@ class LibroController extends Controller
     // return back();
     }
 }
+
